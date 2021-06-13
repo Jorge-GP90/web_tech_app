@@ -1,11 +1,59 @@
 <html>
   <head>
+    <title> Web Tech App</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link rel="stylesheet" href="cgi_css.css">
   </head>
   <body>
-    <h1>test！！！！！！！！！！！！！</h1>
-
-    <b>get ready!</b>
-    <strong>You can do it!!<strong>
+    <h1>Web Tech App</h1>    
+    <table class= "database">
+    <th>
+      <strong>Demostration<strong>
+    </th>
+      <tr>
+        <% require 'pg' %>
+        <% connection = PG::connect(dbname: "goya_cgi") %>
+        <% connection.internal_encoding = "UTF-8" %>
+          <form action='cgi_indicate.cgi' method='POST'>
+            Please enter your Data Base name:<br><br>
+            <input type="text"  name='input' ><br>
+            <input type="submit" name="Send" >
+          </form>
+      </tr>
+      <tr>
+          <% result = connection.exec("SELECT quality, length, weight, give_for, date FROM crops WHERE NOT (give_for ='self consumption')")%>
+          <% data = [] %>
+          <% result.each do |record| %>
+            <% data << "The Quality:　#{record["quality"]  } ,
+                        Who sold:　#{record["give_for"]  }  ,
+                        Length:　#{record["length"]  }  ,
+                        Weight:　#{record["weight"] }  ,
+                        Date:　#{record["date"]  }   " %>
+          <% end %>
+          <br><br>
+          <form action='goya_cgi.cgi' method='POST'>
+            Press the button below to jump to the information page of the size of bitter gourd and the person who sold it.<br><br>
+            <input type="text" name="goya_cgi" value="<%= data.join(' ')%>">
+            <input type="submit" name="Send" >
+          </form>
+        </tr>
+        <tr>
+          <% result = connection.exec("SELECT quality, length, weight, give_for, date FROM crops WHERE quality = false")%>
+          <% data = [] %>
+          <% result.each do |record| %>
+            <% data << "The Quality:　#{record["quality"]} 
+                        Who sold:　#{record["give_for"]}
+                        Length:　#{record["length"]}
+                        Weight:　#{record["weight"]}
+                        Date:　#{record["date"]} " %>
+          <% end %>
+          <br><br>
+          <form action='goya_cgi.cgi' method='POST'>
+            Products with Poor Quality:<br><br>
+            <input type="text" name="goya_cgi" value="<%= data.join(' ')%>">
+            <input type="submit" name="Send" >
+          </form>
+        </tr>
+    </table>
   </body>
 </html>
