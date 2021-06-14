@@ -7,6 +7,7 @@ server = WEBrick::HTTPServer.new({
 ['INT', 'TERM'].each {|signal|
   Signal.trap(signal){ server.shutdown }
 }
+server.mount('/', WEBrick::HTTPServlet::ERBHandler, 'web_tech_cgi.html')
 server.mount('/web_tech_app', WEBrick::HTTPServlet::ERBHandler, 'cgi.html.erb')
 server.mount('/cgi_indicate.cgi', WEBrick::HTTPServlet::CGIHandler, 'cgi_indicate.rb')
 server.mount('/goya_cgi.cgi', WEBrick::HTTPServlet::CGIHandler, 'goya_cgi.rb')
